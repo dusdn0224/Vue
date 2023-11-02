@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		.completed {
+			text-decoration: line-through;
+			color:gray;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<h1>할 일 목록</h1>
+		<div>
+			<input type="text" v-model="newTodo" @keyup.enter="addTodo">
+			<button @click="addTodo">추가</button>
+			<ul>
+				<!-- :key="todo.id" @click="toggleTodoStatus(todo)"  -->
+				<li v-for="(todo, index) in todos" :key="todo.id" @click="toggleTodoStatus(todo)" :class="{ 'completed': todo.completed }">
+					<span style="margin-right: 1rem;" @click="toggleTodoStatus(todo)">{{ todo.text }}</span>
+					<button @click="deleteTodo(index)">삭제</button>
+				</li>
+			</ul>
+			<button @click="deleteCompletedTodos" v-if="todoCount">완료된 할 일 삭제</button>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script>
+		const { createApp, ref, computed } = Vue
+		const app = createApp({
+			setup() {
+				const todos = ref([])
+				const newTodo = ref('')
+				let todoId = 1
+				const addTodo = function () {
+					if (newTodo.value.trim()) {
+						const tmp = {
+							id: todoId++,
+							text: newTodo.value,
+							completed: false,
+						}
+						todos.value.push(tmp)
+						newTodo.value = ''
+					} else {
+						alert('Type something!')
+						newTodo.value = ''
+					}
+				}
+				const deleteTodo = function (index) {
+					todos.value.splice(index, 1)
+				}
+				const toggleTodoStatus = function (todo) {
+					todo.completed = !todo.completed
+				}
+				const deleteCompletedTodos = () => {
+					todos.value = todos.value.filter((todo) => {
+						return todo.completed === false
+					})
+				}
+				// const todoCount = () => {
+				// 	return todos.value.filter((todo) => todo.completed).length > 0 ? true : false
+				// }
+				const todoCount = computed(() => todos.value.filter((todo) => todo.completed).length)
+				return {
+					todos, newTodo, addTodo, deleteTodo,
+					toggleTodoStatus, deleteCompletedTodos,
+					todoCount
+				}
+			}
+		})
+		app.mount('#app')
+	</script>
+	
+</body>
+</html>
