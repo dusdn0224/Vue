@@ -1,17 +1,20 @@
 <template>
-  <div style="text-align: center; margin-top: 10%;">
-    <h3>보유 명함 목록</h3>
-    <div v-for="card in cards" class="cards">
-      <p class="name">이름: {{ card.name }}</p>
-      <p>직함: {{ card.title }}</p>
-    </div>
+  <div class="cards">
+    <p class="name">이름: {{ card.name }}</p>
+    <p>직함: {{ card.title }}</p>
+    <button @click="deleteCard">명함 삭제</button>
   </div>
 </template>
 
 <script setup>
-defineProps({
-  cards: Object,
+const props = defineProps({
+  card: Object,
 })
+
+const emit = defineEmits(['deleteCard'])
+const deleteCard = () => {
+  emit('deleteCard', props.card)
+}
 </script>
 
 <style scoped>
